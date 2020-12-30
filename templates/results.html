@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Traditional costume classifier: results</title>
+	</head>
+	<body>
+		<div>
+			<h1>Results</h1>
+			<ol>
+			{% for score in scores %}
+				<li><a href="/costumes/{{ score[0] }}">{{ score[1] }}</a> ({{ score[2] }})</li>
+			{% endfor %}
+			</ol>
+		</div>
+	</body>
+</html>

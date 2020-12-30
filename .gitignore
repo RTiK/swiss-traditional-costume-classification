@@ -1,0 +1,17 @@
+# python/jupyter stuff
+*.py[cod]
+__pycache__/
+.idea/
+.ipynb_checkpoints/
+
+# work stuff
+venv/
+config.ini
+resources/models/
+
+# work directories
+data/samples/
+data/uploads/
+# following directories are created after unarchiving work data
+data/descriptors/
+data/patches/
