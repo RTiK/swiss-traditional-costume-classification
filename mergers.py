@@ -1,6 +1,6 @@
 import pyopencl as cl
 import numpy as np
-from skimage.measure import compare_mse
+from skimage.metrics import mean_squared_error
 from skimage.transform import warp
 import logging
 from datetime import datetime
@@ -192,12 +192,12 @@ class InplaceMseMerger:
         out = np.empty((11, 1, 1, 3))
         out.fill(np.nan)
         out[5, 0, 0] = np.array([
-            compare_mse(self.target_image[:, :, 0] * self.target_image[:, :, 3],
-                        self.query_image[:, :, 0] * self.query_image[:, :, 3]),
-            compare_mse(self.target_image[:, :, 1] * self.target_image[:, :, 3],
-                        self.query_image[:, :, 1] * self.query_image[:, :, 3]),
-            compare_mse(self.target_image[:, :, 2] * self.target_image[:, :, 3],
-                        self.query_image[:, :, 2] * self.query_image[:, :, 3])
+            mean_squared_error(self.target_image[:, :, 0] * self.target_image[:, :, 3],
+                               self.query_image[:, :, 0] * self.query_image[:, :, 3]),
+            mean_squared_error(self.target_image[:, :, 1] * self.target_image[:, :, 3],
+                               self.query_image[:, :, 1] * self.query_image[:, :, 3]),
+            mean_squared_error(self.target_image[:, :, 2] * self.target_image[:, :, 3],
+                               self.query_image[:, :, 2] * self.query_image[:, :, 3])
         ])
 
         return MergeData(self.target_image, self.target_tag, self.query_image,
@@ -436,14 +436,16 @@ def compute_descriptors(train_sets, merger):
     descriptors = {}
     start = datetime.now()
     for cls, limbs in train_sets.items():
-        cls_descriptors = []
         print(datetime.now(), cls)
-        for ims in limbs:
-            merge_series = MergeRunner(ims, True).run(merger, -1)
-            cls_descriptors += [merge_series[-1].merged_image()]
+        cls_descriptors = [compute_descriptor_from_patches(patches, merger) for patches in limbs]
         descriptors[cls] = cls_descriptors
     print('Merge Time:', datetime.now() - start)
     return descriptors
+
+
+def compute_descriptor_from_patches(patches, merger):
+    merge_series = MergeRunner(patches, True).run(merger, -1)
+    return [merge_series[-1].merged_image()]
 
 
 def predict(merger, descriptors, sample_sets):
