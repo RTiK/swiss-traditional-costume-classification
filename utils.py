@@ -91,6 +91,16 @@ def read_predictions_from_file(metric_name, color_model_name, sample_set_name, f
 to_flip = [12, 34, 192, 1536, 4098, 24576]  # these patches from the right will be flipped
 patch_map = {6: 2, 12: 1, 24: 0, 34: 2, 96: 1, 192: 0, 514: 3, 1536: 4, 3072: 5, 4098: 3, 12288: 4, 24576: 5}  # feature code to feature index
 
+'''
+In the following methods the `data` argument is expected to provide 
+{class0: {
+    feature_code: [file_name, file_name, ...],
+    feature_code: [file_name, file_name, ...],
+    feature_code: [file_name, file_name, ...],
+    ...
+}, ...}
+'''
+
 
 def read_patches_rgb(data, scale=0.5):
     img_data = {}
@@ -101,10 +111,10 @@ def read_patches_rgb(data, scale=0.5):
             for f in files:
                 if limb not in to_flip:
                     img_data[cls][dest_i] += [
-                        img_as_float32(rescale(imread('%s/%s.png' % (PATCHES_PATH, f)), scale))]
+                        img_as_float32(rescale(imread('%s/%s.png' % (PATCHES_PATH, f)), scale, multichannel=True))]
                 else:
                     img_data[cls][dest_i] += [
-                        img_as_float32(rescale(np.fliplr(imread('%s/%s.png' % (PATCHES_PATH, f))), scale))]
+                        img_as_float32(rescale(np.fliplr(imread('%s/%s.png' % (PATCHES_PATH, f))), scale, multichannel=True))]
     return img_data
 
 
@@ -115,9 +125,9 @@ def read_patches_yiq(data, scale=0.5):
         for limb, files in limbs.items():
             dest_i = patch_map[limb]
             for f in files:
-                im = rescale(imread('%s/%s.png' % (PATCHES_PATH, f)), scale) \
+                im = rescale(imread('%s/%s.png' % (PATCHES_PATH, f)), scale, multichannel=True) \
                         if limb not in to_flip \
-                        else rescale(np.fliplr(imread('%s/%s.png' % (PATCHES_PATH, f))), scale)
+                        else rescale(np.fliplr(imread('%s/%s.png' % (PATCHES_PATH, f))), scale, multichannel=True)
                 conv_im = np.array(np.dstack([rgb2yiq(im[:, :, :3]), im[:, :, 3]]), dtype=np.float32)
                 img_data[cls][dest_i] += [conv_im]
     return img_data
@@ -130,9 +140,9 @@ def read_patches_0iq(data, scale=0.5):
         for limb, files in limbs.items():
             dest_i = patch_map[limb]
             for f in files:
-                im = rescale(imread('%s/%s.png' % (PATCHES_PATH, f)), scale) \
+                im = rescale(imread('%s/%s.png' % (PATCHES_PATH, f)), scale, multichannel=True) \
                         if limb not in to_flip \
-                        else rescale(np.fliplr(imread('%s/%s.png' % (PATCHES_PATH, f))), scale)
+                        else rescale(np.fliplr(imread('%s/%s.png' % (PATCHES_PATH, f))), scale, multichannel=True)
                 conv_im = np.array(np.dstack([rgb2yiq(im[:, :, :3]), im[:, :, 3]]), dtype=np.float32)
                 conv_im[:, :, 0] = 0
                 img_data[cls][dest_i] += [conv_im]
@@ -146,9 +156,9 @@ def read_patches_lab(data, scale=0.5):
         for limb, files in limbs.items():
             dest_i = patch_map[limb]
             for f in files:
-                im = rescale(imread('%s/%s.png' % (PATCHES_PATH, f)), scale) \
+                im = rescale(imread('%s/%s.png' % (PATCHES_PATH, f)), scale, multichannel=True) \
                         if limb not in to_flip \
-                        else rescale(np.fliplr(imread('%s/%s.png' % (PATCHES_PATH, f))), scale)
+                        else rescale(np.fliplr(imread('%s/%s.png' % (PATCHES_PATH, f))), scale, multichannel=True)
                 conv_im = np.array(np.dstack([rgb2lab(im[:, :, :3]), im[:, :, 3]]), dtype=np.float32)
                 img_data[cls][dest_i] += [conv_im]
     return img_data
@@ -161,9 +171,9 @@ def read_patches_0ab(data, scale=0.5):
         for limb, files in limbs.items():
             dest_i = patch_map[limb]
             for f in files:
-                im = rescale(imread('%s/%s.png' % (PATCHES_PATH, f)), scale) \
+                im = rescale(imread('%s/%s.png' % (PATCHES_PATH, f)), scale, multichannel=True) \
                         if limb not in to_flip \
-                        else rescale(np.fliplr(imread('%s/%s.png' % (PATCHES_PATH, f))), scale)
+                        else rescale(np.fliplr(imread('%s/%s.png' % (PATCHES_PATH, f))), scale, multichannel=True)
                 conv_im = np.array(np.dstack([rgb2lab(im[:, :, :3]), im[:, :, 3]]), dtype=np.float32)
                 conv_im[:, :, 0] = 0
                 img_data[cls][dest_i] += [conv_im]
