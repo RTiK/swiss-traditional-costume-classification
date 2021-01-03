@@ -1,6 +1,6 @@
 # Swiss Traditional Costume Classification
 
-## How it works
+## How it works
 
 We use [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) to approimate the pose of the person in the image. Having a poselet, we cut out patches containing forearms, upper arms, shoulders, torso, upper and lower legs from the image. Afterwards we compute feature descriptors from the patches from the same costume and the same body part. 
 
@@ -80,7 +80,7 @@ cp config_template.ini config.ini
 * Deploy Redis
 
 ```bash
-Redis
+redis
 ```
 
 * Deploy Celery
