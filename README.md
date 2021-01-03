@@ -1,13 +1,16 @@
 # Swiss Traditional Costume Classification
 
-This repository contains the code for my master's project. The goal was to preform a classification of a Swiss traditional costume based on a photo.
+## How it works
 
-Each region in Switzerland has unique costumes for different purposes and occasions e.g. celebrations, work clothes, church visits. The appearance of each cosutme defined in written guidelines. These guidelines must be strictly followed, however, these guidelines allow variations in color or the choice of accessoires (for unmarried persons) for many costumes. In this project we call these variations _subtypes of a costume_ and they have a reference to the _costume supertype_. In this README we will only talk of _supertypes_ to keep things simple.
+We use [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) to approimate the pose of the person in the image. Having a poselet, we cut out patches containing forearms, upper arms, shoulders, torso, upper and lower legs from the image. Afterwards we compute feature descriptors from the patches from the same costume and the same body part. 
 
-In total there are ower 400 different costumes. We managed to gather 1540 full body shots of persons in 274 different costumes. Unfortunately, we cannot share this dataset because it contains prvivate pictures. But we do provide
-The scarcity of the dataset is one of the biggest challenges we faced in this project. 
+A new image goes through the same process of patch extraction. Then the new patches are compared to the descriptors of all known classes and the unknown costume is assigned to the most similar decriptors. For more details check out our [paper](https://www.researchgate.net/publication/340042658_Image-based_Classification_of_Swiss_Traditional_Costumes_using_Contextual_Features).
 
-We used [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) for pose recognition and used body parts as features. Then we cut out patches from the image containing these body parts and compute feature descriptors from the patches from the same costume and the same body part. Patches from new image are compared to the descriptors and thus the most similar costume is determined. For more details check out our [paper](https://www.researchgate.net/publication/340042658_Image-based_Classification_of_Swiss_Traditional_Costumes_using_Contextual_Features).
+## How traditional costumes work
+
+Each region in Switzerland has unique traditional costumes for different purposes and occasions e.g. celebrations, work clothes, church visits. The appearance of each cosutme is defined in written form. These guidelines must be strictly followed, however, they allow some variations in color, choice of accessoires etc. for many costumes. In this project we call these variations _subtypes of a costume_. These subtypes keep a reference to the _costume supertype_. In this README we will only talk of _supertypes_ to keep things simple.
+
+In total there are ower 400 different costumes. We managed to gather 1540 full body shots of persons in 274 different costumes. Unfortunately, we cannot share this dataset because it contains prvivate pictures. But we do provide an archive with the extracted patches and the descriptors computed from them.
 
 ## Contents
 
@@ -51,13 +54,13 @@ The data used in this project is organized in tables below. The tables in the up
 pip install -r requirements.txt
 ```
 
-* Import the database into a MySQL database (or a comparable relational database), the schema `stcdb` will be created automatically
+* Import the database backup into a MySQL database (or a comparable relational database). The schema `stcdb` will be created automatically
 
 ```bash
 mysql --user user --password < data/database/stcdb_backup.sql
 ```
 
-* Extract the archives `patches.7z` and `descriptors.7z` (default location for these directories is `data/patches` and `data/descriptors`)
+* Extract the archives `patches.7z` and `descriptors.7z` in the Release 0.1 (default location for these directories is `data/patches` and `data/descriptors`)
 
 ```bash
 7z x patches.7z -o data/patches
@@ -70,7 +73,7 @@ mysql --user user --password < data/database/stcdb_backup.sql
 cp config_template.ini config.ini
 ```
 
-* Modify the configuration file according to your setup
+* Modify the configuration file `config.ini` according to your setup
 
 ## Startup
 
@@ -86,7 +89,7 @@ Redis
 celery -A classifier_worker worker -c 1 -P solo
 ```
 
-> The argument `solo` starts only one process which is OK because poselet recognition is a bottleneck
+> The argument `solo` starts only one worker. This is OK because we don't want OpenPose to be available on multiple threads in GPU.
 
 * Deploy the web server
 
