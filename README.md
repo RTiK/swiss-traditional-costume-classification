@@ -10,7 +10,7 @@ A new image goes through the same process of patch extraction. Then the new patc
 
 Each region in Switzerland has unique traditional costumes for different purposes and occasions e.g. celebrations, work clothes, church visits. The appearance of each costume is rigorously defined. These guidelines must be followed strictly, however, they allow some variations in color, choice of accessoires etc. for many costumes. In this project we call these variations _subtypes of a costume_. These subtypes keep a reference to the _costume supertype_. In this README we will only talk of _supertypes_ to keep things simple.
 
-In total there are ower 400 different costumes. We managed to gather 1540 full-body pictures of people wearing 274 different costumes. Unfortunately, we cannot share this dataset for privacy reasons. But we do provide an archive with the extracted patches and the descriptors computed from them.
+In total there are over 400 different costumes. We managed to gather 1540 full-body pictures of people wearing 274 different costumes. Unfortunately, we cannot share this dataset for privacy reasons. But we do provide an archive with the extracted patches and the descriptors computed from them.
 
 ## Contents of the repository
 
